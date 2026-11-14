@@ -1,0 +1,41 @@
+{
+  "contract": "employer-feeds",
+  "version": "3.1",
+  "feeds": [
+    {
+      "feed_type": "MEMBERS",
+      "module": "member_feed",
+      "record": "MemberRecord",
+      "description": "One detail record per member in each employer member file.",
+      "fields": [
+        {"name": "employer_id", "required": true, "class": "internal", "format": "E and 5 digits"},
+        {"name": "member_ref", "required": true, "class": "internal", "format": "M and 6 digits"},
+        {"name": "ni_number", "required": true, "class": "personal", "format": "NI number"},
+        {"name": "surname", "required": true, "class": "personal"},
+        {"name": "forenames", "required": true, "class": "personal"},
+        {"name": "date_of_birth", "required": true, "class": "personal", "format": "DD/MM/YYYY",
+         "note": "kept as text; validated downstream, not by feeds"},
+        {"name": "date_joined", "required": true, "class": "internal", "format": "DD/MM/YYYY"},
+        {"name": "salary", "required": true, "class": "internal", "format": "decimal, 2 places"}
+      ]
+    },
+    {
+      "feed_type": "CONTRIB",
+      "module": "contribution_feed",
+      "record": "ContributionRecord",
+      "description": "One detail record per employer, payroll and contribution period.",
+      "fields": [
+        {"name": "employer_id", "required": true, "class": "internal", "format": "E and 5 digits"},
+        {"name": "payroll_id", "required": true, "class": "internal"},
+        {"name": "period", "required": true, "class": "internal", "format": "YYYY-MM"},
+        {"name": "amount_due", "required": true, "class": "internal", "format": "decimal, 2 places"},
+        {"name": "amount_paid", "required": true, "class": "internal", "format": "decimal, 2 places",
+         "note": "total received to date"},
+        {"name": "paid_on", "required": false, "class": "internal", "format": "DD/MM/YYYY",
+         "note": "empty until payment is received; the date of the latest payment"},
+        {"name": "bank_sort_code", "required": true, "class": "confidential"},
+        {"name": "bank_account", "required": true, "class": "confidential"}
+      ]
+    }
+  ]
+}

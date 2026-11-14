@@ -1,0 +1,11 @@
+[project]
+name = "contributions-pipeline"
+version = "2.7.0"
+description = "Nightly ingestion of employer member and contribution files"
+requires-python = ">=3.12"
+dependencies = ["pyspark>=3.5,<3.6"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src", "vendor", "."]
+testpaths = ["tests"]
+filterwarnings = ["ignore::DeprecationWarning:pyspark.*"]

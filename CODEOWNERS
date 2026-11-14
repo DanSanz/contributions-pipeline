@@ -1,0 +1,5 @@
+# Changes to these paths need a review from the owning group.
+/pipeline/settings.py   @example-org/contributions-tech-leads
+/contracts/             @example-org/feed-contract
+/src/generated/         @example-org/feed-contract
+/vendor/                @example-org/platform
