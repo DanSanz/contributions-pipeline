@@ -14,6 +14,7 @@ from member_store import MemberStore, SqliteMemberStore, load_members
 from pipeline import settings
 from scheme_common import audit
 from scheme_common.audit import record_event
+from sender_check import rows_for_other_employers
 
 logger = logging.getLogger(__name__)
 
@@ -33,6 +34,9 @@ def ingest_file(path: Path, store: MemberStore) -> IngestSummary:
         raise ValueError(f"{header.file_id} is a {header.feed_type} file, not MEMBERS")
 
     rows = list(read_file(path))
+    strays = rows_for_other_employers(header.sender_id, rows)
+    if strays:
+        logger.warning("%s: %d rows for another employer", header.file_id, len(strays))
     loaded = load_members(store, rows, file_id=header.file_id)
 
     record_event(
