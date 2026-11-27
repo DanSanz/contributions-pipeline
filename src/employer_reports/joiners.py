@@ -1,12 +1,11 @@
 from __future__ import annotations
 
-from datetime import date, datetime
+from datetime import date
 
 from member_service import MemberService
+from scheme_common.dates import parse_uk_date
 
 from employer_reports.report import Report
-
-_FMT = "%d/%m/%Y"
 
 
 def joiners_report(members: MemberService, employer_id: str, start: date, end: date) -> Report:
@@ -18,9 +17,9 @@ def joiners_report(members: MemberService, employer_id: str, start: date, end: d
     joined = [
         m for m in members.everyone()
         if m.employer_id == employer_id
-        and datetime.strptime(m.date_joined, _FMT).date() >= start
-        and datetime.strptime(m.date_joined, _FMT).date() <= end
+        and parse_uk_date(m.date_joined) >= start
+        and parse_uk_date(m.date_joined) <= end
     ]
-    for m in sorted(joined, key=lambda m: datetime.strptime(m.date_joined, _FMT)):
+    for m in sorted(joined, key=lambda m: parse_uk_date(m.date_joined)):
         report.add_row(m.member_ref, m.date_joined)
     return report

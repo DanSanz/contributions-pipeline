@@ -1,6 +1,7 @@
 import datetime as dt
 import logging
 
+from scheme_common.dates import parse_uk_date
 from tests.builders import make_member
 from valuation_extract import eligible_members, joined_in_year, service_days
 
@@ -21,19 +22,19 @@ def test_a_member_who_joined_after_the_as_at_date_is_left_out():
 
 def test_a_member_who_joined_on_the_as_at_date_is_eligible():
     member = make_member(member_ref="M900411", date_joined="31/03/2026")
-    as_at = dt.datetime.strptime(member.date_joined, "%d/%m/%Y").date()
+    as_at = parse_uk_date(member.date_joined)
     assert _refs(eligible_members([member], as_at)) == ["M900411"]
 
 
 def test_a_member_who_joined_the_day_before_the_as_at_date_is_eligible():
     member = make_member(member_ref="M900421", date_joined="01/04/2026")
-    as_at = dt.datetime.strptime(member.date_joined, "%d/%m/%Y").date() + dt.timedelta(days=1)
+    as_at = parse_uk_date(member.date_joined) + dt.timedelta(days=1)
     assert _refs(eligible_members([member], as_at)) == ["M900421"]
 
 
 def test_a_member_who_joined_the_day_after_the_as_at_date_is_left_out():
     member = make_member(member_ref="M900431", date_joined="31/03/2026")
-    as_at = dt.datetime.strptime(member.date_joined, "%d/%m/%Y").date() - dt.timedelta(days=1)
+    as_at = parse_uk_date(member.date_joined) - dt.timedelta(days=1)
     assert eligible_members([member], as_at) == []
 
 

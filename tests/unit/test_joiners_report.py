@@ -1,8 +1,9 @@
-from datetime import date, datetime
+from datetime import date
 
 from employer_reports import joiners_report
 from member_service import MemberService
 from member_store import InMemoryMemberStore
+from scheme_common.dates import parse_uk_date
 from tests.builders import make_member
 
 START = date(2026, 11, 1)
@@ -29,21 +30,21 @@ def test_lists_members_who_joined_in_the_range_oldest_first():
 def test_leaves_out_members_of_other_employers():
     ours = make_member(member_ref="M900311", employer_id="E90001", date_joined="10/11/2026")
     theirs = make_member(member_ref="M900312", employer_id="E90002", date_joined="10/11/2026")
-    joined = datetime.strptime(ours.date_joined, "%d/%m/%Y").date()
+    joined = parse_uk_date(ours.date_joined)
     report = joiners_report(_service(ours, theirs), "E90001", joined, joined)
     assert [row[0] for row in report.rows] == ["M900311"]
 
 
 def test_start_date_is_included():
     member = make_member(member_ref="M900321", date_joined="01/11/2026")
-    start = datetime.strptime(member.date_joined, "%d/%m/%Y").date()
+    start = parse_uk_date(member.date_joined)
     report = joiners_report(_service(member), "E90001", start, END)
     assert report.rows == [["M900321", "01/11/2026"]]
 
 
 def test_end_date_is_included():
     member = make_member(member_ref="M900331", date_joined="01/12/2026")
-    end = datetime.strptime(member.date_joined, "%d/%m/%Y").date()
+    end = parse_uk_date(member.date_joined)
     report = joiners_report(_service(member), "E90001", START, end)
     assert report.rows == [["M900331", "01/12/2026"]]
 

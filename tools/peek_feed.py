@@ -8,11 +8,10 @@ nightly job rejects. It prints line numbers, never field values.
 
 from __future__ import annotations
 
-import datetime
 import sys
 from pathlib import Path
 
-from scheme_common.dates import UK_DATE_FORMAT
+from scheme_common.dates import parse_uk_date
 from scheme_common.feeds import DETAIL, iter_records, read_lines
 
 
@@ -20,7 +19,7 @@ def summarise(path: Path) -> dict:
     """Feed type, sender, file date, number of detail lines and the line numbers of bad rows."""
     records = list(iter_records(read_lines(Path(path))))
     _, _, header = records[0]
-    file_date = datetime.datetime.strptime(header[3], UK_DATE_FORMAT)
+    file_date = parse_uk_date(header[3])
 
     lines = 0
     bad_rows = []
@@ -30,10 +29,10 @@ def summarise(path: Path) -> dict:
         lines += 1
         try:
             if header[0] == "MEMBERS":
-                datetime.datetime.strptime(fields[5], UK_DATE_FORMAT)
-                datetime.datetime.strptime(fields[6], UK_DATE_FORMAT)
+                parse_uk_date(fields[5])
+                parse_uk_date(fields[6])
             elif header[0] == "CONTRIB" and fields[5]:
-                datetime.datetime.strptime(fields[5], UK_DATE_FORMAT)
+                parse_uk_date(fields[5])
         except (ValueError, IndexError):
             bad_rows.append(line_no)
 

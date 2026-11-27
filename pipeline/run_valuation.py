@@ -10,18 +10,18 @@ from __future__ import annotations
 
 import argparse
 import sys
-from datetime import datetime
 
 from member_service import MemberService
 from member_store import SqliteMemberStore
 from pipeline import settings
 from pipeline.spark import get_spark
+from scheme_common.dates import parse_uk_date
 from valuation_extract import build_extract, eligible_members, members_frame
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Build the valuation extract.")
-    parser.add_argument("--valuation-date", type=lambda text: datetime.strptime(text, "%d/%m/%Y").date(),
+    parser.add_argument("--valuation-date", type=lambda text: parse_uk_date(text),
                         required=True, help="DD/MM/YYYY")
     parser.add_argument("--show", action="store_true", help="print the extract instead of writing it")
     args = parser.parse_args(argv)

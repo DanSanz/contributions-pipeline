@@ -1,5 +1,4 @@
-from datetime import datetime
-
+from scheme_common.dates import parse_uk_date
 from tools.peek_feed import main, summarise
 
 
@@ -9,13 +8,13 @@ def _header(path):
 
 def test_reports_the_header_date_of_a_member_file(fixtures_dir):
     path = fixtures_dir / "members_E90001_20261102.txt"
-    file_date = datetime.strptime(_header(path)[4], "%d/%m/%Y")
+    file_date = parse_uk_date(_header(path)[4])
     assert summarise(path)["file_date"] == file_date
 
 
 def test_reports_the_header_date_of_a_contributions_file(fixtures_dir):
     path = fixtures_dir / "contributions_E90001_202609.txt"
-    file_date = datetime.strptime(_header(path)[4], "%d/%m/%Y")
+    file_date = parse_uk_date(_header(path)[4])
     assert summarise(path)["file_date"] == file_date
 
 

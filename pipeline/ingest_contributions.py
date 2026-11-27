@@ -6,13 +6,14 @@ import argparse
 import logging
 import sys
 from dataclasses import dataclass
-from datetime import date, datetime
+from datetime import date
 from pathlib import Path
 
 from employer_reports import (Report, ageing_report, feed_errors_report, late_payers_report,
                               to_text_table)
 from feeds import FeedError, read_file, read_header
 from late_contributions import Assessment, RowError, assess, from_feed
+from scheme_common.dates import parse_uk_date
 
 logger = logging.getLogger(__name__)
 
@@ -49,7 +50,7 @@ def run(path: Path, run_date: date) -> ContributionsRun:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Assess employer contribution files.")
     parser.add_argument("files", nargs="+", type=Path)
-    parser.add_argument("--run-date", type=lambda text: datetime.strptime(text, "%d/%m/%Y").date(),
+    parser.add_argument("--run-date", type=lambda text: parse_uk_date(text),
                         default=date.today(), help="DD/MM/YYYY; defaults to today")
     args = parser.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")

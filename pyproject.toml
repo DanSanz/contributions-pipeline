@@ -9,3 +9,34 @@ dependencies = ["pyspark>=3.5,<3.6"]
 pythonpath = ["src", "vendor", "."]
 testpaths = ["tests"]
 filterwarnings = ["ignore::DeprecationWarning:pyspark.*"]
+
+[tool.ruff]
+extend-exclude = ["vendor", "src/generated"]
+
+[tool.ruff.lint]
+select = ["TID251"]
+
+[tool.ruff.lint.flake8-tidy-imports.banned-api]
+"datetime.datetime.strptime".msg = "Feed dates are DD/MM/YYYY. Use scheme_common.dates.parse_uk_date."
+"time.strptime".msg = "Feed dates are DD/MM/YYYY. Use scheme_common.dates.parse_uk_date."
+
+[tool.importlinter]
+root_packages = [
+    "pipeline", "employer_reports", "late_contributions", "reconciliation",
+    "valuation_extract", "member_service", "member_store", "feeds", "generated", "scheme_common",
+]
+
+[[tool.importlinter.contracts]]
+name = "Imports point downwards: jobs, reports, modules, feeds"
+type = "layers"
+layers = [
+    "pipeline",
+    "employer_reports",
+    "late_contributions | reconciliation | valuation_extract | member_service",
+    "member_store",
+    "feeds",
+    "generated",
+    "scheme_common",
+]
+# Known break. feeds._reader still reads STRICT_SCHEMA from the jobs package. That is a known problem to fix in its own change.
+ignore_imports = ["feeds._reader -> pipeline.settings"]
